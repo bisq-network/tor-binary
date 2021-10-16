@@ -5,7 +5,7 @@
 
     <groupId>com.github.JesusMcCloud</groupId>
     <artifactId>tor-binary</artifactId>
-    <version>0.4.5.6</version>
+    <version>0.4.5.10</version>
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -17,7 +17,7 @@
         - gpg in path
         - osx: 7z in path (can be installed with "brew install p7zip")
         -->
-        <torbrowser.version>10.0.12</torbrowser.version>
+        <torbrowser.version>10.5.8</torbrowser.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.remote-resource.directory>${project.build.directory}/maven-shared-archive-resources</project.remote-resource.directory>

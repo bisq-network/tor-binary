@@ -2,7 +2,7 @@
 <project name="tor-binaries" default="checkSignatures">
 
     <property name="project.source.directory" value="tmp"/>
-    <property name="torbrowser.version" value="10.0.12"/>
+    <property name="torbrowser.version" value="10.5.8"/>
     <target name="checkSignatures">
 
         <mkdir dir="${project.source.directory}"/>
