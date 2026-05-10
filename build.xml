@@ -18,12 +18,28 @@
                 dest="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz.asc"
                 skipexisting="true"/>
             <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz.asc"
+                skipexisting="true"/>
+            <get
                 src="${torbrowser.download.base.url}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
                 dest="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
                 skipexisting="true"/>
             <get
                 src="${torbrowser.download.base.url}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz.asc"
                 dest="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz.asc"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz.asc"
                 skipexisting="true"/>
             <get
                 src="${torbrowser.download.base.url}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"
@@ -49,7 +65,15 @@
             </exec>
             <exec executable="gpg" failonerror="true">
                 <arg
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"></arg>
+            </exec>
+            <exec executable="gpg" failonerror="true">
+                <arg
                     line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"></arg>
+            </exec>
+            <exec executable="gpg" failonerror="true">
+                <arg
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"></arg>
             </exec>
             <exec executable="gpg" failonerror="true">
                 <arg

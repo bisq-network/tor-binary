@@ -64,7 +64,9 @@
         <module>tor-binary-linux32</module>
         <module>tor-binary-linux64</module>
         <module>tor-binary-macos</module>
+        <module>tor-binary-macos-aarch64</module>
         <module>tor-binary-windows</module>
+        <module>tor-binary-windows64</module>
         <module>tor-binary-geoip</module>
     </modules>
 </project>

@@ -35,8 +35,16 @@
                                         dest="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"
                                         skipexisting="true"/>
                                     <get
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
+                                        skipexisting="true"/>
+                                    <get
                                         src="${torbrowser.download.base.url}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
                                         dest="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
+                                        skipexisting="true"/>
+                                    <get
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
                                         skipexisting="true"/>
                                     <get
                                         src="${torbrowser.download.base.url}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"
@@ -55,7 +63,9 @@
                                 <condition property="checksumsMatch">
                                     <and>
                                         <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz" />
                                         <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz" />
                                         <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz" />
                                         <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz" />
                                     </and>
