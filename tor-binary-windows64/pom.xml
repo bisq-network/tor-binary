@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>com.github.bisq-network.tor-binary</groupId>
+        <artifactId>tor-binary</artifactId>
+        <version>0.4.9.8</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>tor-binary-windows64</artifactId>
+    <packaging>jar</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <resourceBundles>
+                        <resourceBundle>com.github.bisq-network.tor-binary:tor-binary-resources:${project.version}</resourceBundle>
+                    </resourceBundles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>unpack-windows-x86_64</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <property name="bundle.name" value="tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"/>
+                                <property name="extract.dir" value="${project.build.directory}/tor-expert-bundle-windows-x86_64"/>
+
+                                <delete dir="${extract.dir}" failonerror="false" />
+                                <mkdir dir="${extract.dir}"/>
+
+                                <exec executable="tar" dir="${extract.dir}" failonerror="true">
+                                    <arg value="-xzf"/>
+                                    <arg value="${project.remote-resource.directory}/${bundle.name}"/>
+                                </exec>
+
+                                <fail message="Expected ${extract.dir}/tor in ${bundle.name}">
+                                    <condition>
+                                        <not>
+                                            <available file="${extract.dir}/tor" type="dir"/>
+                                        </not>
+                                    </condition>
+                                </fail>
+
+                                <delete dir="${project.basedir}/src/" failonerror="false" />
+                                <mkdir dir="${project.basedir}/src/main/resources/native/windows/x64/"/>
+
+                                <exec executable="tar" dir="${extract.dir}/tor" failonerror="true">
+                                    <arg line="-cJvf ${project.basedir}/src/main/resources/native/windows/x64/tor.tar.xz ."/>
+                                </exec>
+
+                                <delete dir="${project.remote-resource.directory}" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
