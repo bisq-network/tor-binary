@@ -1,18 +1,18 @@
 # Tor Binary files
 
-Package native Tor files from [Tor Browser project](https://www.torproject.org/) in a way that can be uses by java projects. Use the SHA256 hashes for checksum verification.
+Package native Tor files from [Tor Browser project](https://www.torproject.org/) expert bundles in a way that can be used by Java projects. Use the SHA256 hashes for checksum verification.
 
 # Process
 
-1. Fetch parallel tor browser files
+1. Fetch Tor expert bundles in parallel
 2. Verify checksum
-3. Downloads p7zip for linux if not exists
-4. Extract geoip files from linux tor browser file
+3. Package the `tor/` directory from each bundle as `tor.tar.xz`
+4. Extract geoip files from the Linux x86_64 expert bundle
 
 # Update to new version
 
-1. Replace `torbrowser.version` with target version in the [build file](build.xml) and the [Maven file](pom.xml)
-2. Find out which `tor binary version` is used in the tor browser. Should be announced in the release notes and can be found at the download page as binaries for Windows (https://dist.torproject.org/torbrowser/[torbrowser.version]/tor-win64-[tor-binary-version].zip).
+1. Replace `torbrowser.version` with the target Tor Browser bundle version in the [build file](build.xml) and the [Maven file](pom.xml)
+2. Find out which `tor binary version` is used in that Tor Browser release. Use that as the Maven project version.
 3. Set the `tor-binary version` in following Maven files:
    - [pom.xml](pom.xml)
    - [tor-binary-geoip/pom.xml](tor-binary-geoip/pom.xml)
@@ -21,18 +21,18 @@ Package native Tor files from [Tor Browser project](https://www.torproject.org/)
    - [tor-binary-macos/pom.xml](tor-binary-macos/pom.xml)
    - [tor-binary-resources/pom.xml](tor-binary-resources/pom.xml)
    - [tor-binary-windows/pom.xml](tor-binary-windows/pom.xml)
-4. Get the hash values of the new version from https://dist.torproject.org/torbrowser/[torbrowser.version]/sha256sums-signed-build.txt and update the files inside [tor-binary-resources/checksums](tor-binary-resources/checksums)
+4. Get the hash values of the new version from https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]/sha256sums-signed-build.txt and update the files inside [tor-binary-resources/checksums](tor-binary-resources/checksums). Alternatively, run `ant -f build.xml` to verify signatures and regenerate the checksum files.
 
-Tor browser versions can be found here: https://dist.torproject.org/torbrowser/[torbrowser.version]
+Tor Browser versions can be found here: https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]
 
 # Pre-requisites
 
-- GPG
-- p7zip
+- GPG, only when refreshing checksums with `build.xml`
+- tar with gzip/xz support
 
 
 # Install
-Change in pom to get the desired version
+Change in pom to get the desired Tor Browser bundle version
 
 ```<torbrowser.version>your TorBrowserBundle version here</torbrowser.version>```
 
@@ -62,42 +62,34 @@ Gradle:
 
 # Usage
 
-Tor binary are simple zip files:
+Each platform artifact is a JAR containing `native/.../tor.tar.xz`:
 
 ```
 <dependency>
     <groupId>com.github.bisq-network.tor-binary</groupId>
     <artifactId>tor-binary-linux32</artifactId>
-    <version>${torbrowser.version}</version>
-    <type>tar.xz</type>
-    <classifier>bin</classifier>
+    <version>${tor.version}</version>
 </dependency>
 ```
 ```
 <dependency>
     <groupId>com.github.bisq-network.tor-binary</groupId>
     <artifactId>tor-binary-linux64</artifactId>
-    <version>${torbrowser.version}</version>
-    <type>tar.xz</type>
-    <classifier>bin</classifier>
+    <version>${tor.version}</version>
 </dependency>
 ```
 ```
 <dependency>
     <groupId>com.github.bisq-network.tor-binary</groupId>
     <artifactId>tor-binary-macos</artifactId>
-    <version>${torbrowser.version}</version>
-    <type>tar.xz</type>
-    <classifier>bin</classifier>
+    <version>${tor.version}</version>
 </dependency>
 ```
 ```
 <dependency>
     <groupId>com.github.bisq-network.tor-binary</groupId>
     <artifactId>tor-binary-windows</artifactId>
-    <version>${torbrowser.version}</version>
-    <type>tar.xz</type>
-    <classifier>bin</classifier>
+    <version>${tor.version}</version>
 </dependency>
 ```
 
@@ -111,20 +103,17 @@ you may want to unpack these dependencies if required using
             <id>copy</id>
             <phase>generate-resources</phase>
             <goals>
-                <goal>copy</goal>
+                <goal>unpack</goal>
             </goals>
             <configuration>
                 <artifactItems>
                     <artifactItem>
-                        <groupId>com.cedricwalter</groupId>
+                        <groupId>com.github.bisq-network.tor-binary</groupId>
                         <artifactId>tor-binary-linux32</artifactId>
-                        <version>${torbrowser.version}</version>
-                        <type>tar.xz</type>
-                        <classifier>bin</classifier>
+                        <version>${tor.version}</version>
                         <overWrite>false</overWrite>
-                        <outputDirectory>${project.build.directory}/classes/native/linux/x86
-                        </outputDirectory>
-                        <destFileName>tor.tar.xz</destFileName>
+                        <includes>native/linux/x86/tor.tar.xz</includes>
+                        <outputDirectory>${project.build.directory}/classes</outputDirectory>
                     </artifactItem>
                  </artifactItems>
             </configuration>

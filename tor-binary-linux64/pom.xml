@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.bisq-network.tor-binary</groupId>
         <artifactId>tor-binary</artifactId>
-        <version>0.4.7.10</version>
+        <version>0.4.9.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -41,20 +41,33 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <delete dir="${project.build.directory}/tor-browser-linux32-${torbrowser.version}_en-US/" failonerror="false" />
+                                <property name="bundle.name" value="tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"/>
+                                <property name="extract.dir" value="${project.build.directory}/tor-expert-bundle-linux-x86_64"/>
 
-                                <exec executable="tar" dir="${project.build.directory}" failonerror="true">
-                                    <arg value="-xJvf"/>
-                                    <arg value="${project.remote-resource.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"/>
-                                    <arg value="tor-browser_en-US/Browser/TorBrowser/Tor/"/>
+                                <delete dir="${extract.dir}" failonerror="false" />
+                                <mkdir dir="${extract.dir}"/>
+
+                                <exec executable="tar" dir="${extract.dir}" failonerror="true">
+                                    <arg value="-xzf"/>
+                                    <arg value="${project.remote-resource.directory}/${bundle.name}"/>
+                                </exec>
+
+                                <fail message="Expected ${extract.dir}/tor in ${bundle.name}">
+                                    <condition>
+                                        <not>
+                                            <available file="${extract.dir}/tor" type="dir"/>
+                                        </not>
+                                    </condition>
+                                </fail>
+
+                                <delete dir="${project.basedir}/src/" failonerror="false" />
+                                <mkdir dir="${project.basedir}/src/main/resources/native/linux/x64/"/>
+
+                                <exec executable="tar" dir="${extract.dir}/tor" failonerror="true">
+                                    <arg line="-cJvf ${project.basedir}/src/main/resources/native/linux/x64/tor.tar.xz ."/>
                                 </exec>
 
                                 <delete dir="${project.remote-resource.directory}" />
-                                <delete dir="${project.basedir}/src/" failonerror="false" />
-                                <mkdir dir="${project.basedir}/src/main/resources/native/linux/x64/"/>
-                                <exec executable="tar" dir="${project.build.directory}/tor-browser_en-US/Browser/TorBrowser/Tor/" failonerror="true">
-                                    <arg line="-cJvf ${project.basedir}/src/main/resources/native/linux/x64/tor.tar.xz ."/>
-                                </exec>
                             </target>
                         </configuration>
                         <goals>

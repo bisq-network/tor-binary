@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.bisq-network.tor-binary</groupId>
         <artifactId>tor-binary</artifactId>
-        <version>0.4.7.10</version>
+        <version>0.4.9.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -41,35 +41,33 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <property name="7z_executable" value="${project.remote-resource.directory}/p7zip/7z" />
-                                <chmod dir="${7z_executable}/.." perm="+x" includes="**/*"/>
+                                <property name="bundle.name" value="tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"/>
+                                <property name="extract.dir" value="${project.build.directory}/tor-expert-bundle-macos-x86_64"/>
 
-                                <property environment="env" />
-                                <available file="7z" filepath="${env.PATH}" property="7z_executable" value="7z"/>
+                                <delete dir="${extract.dir}" failonerror="false" />
+                                <mkdir dir="${extract.dir}"/>
 
-                                <delete dir="${project.build.directory}/osx" failonerror="false" />
-
-                                <!-- unpack Tor
-                                x unpack
-                                -o destination folder
-                                -aoa Overwrite all existing files without prompt.
-                                -->
-                                <exec executable="${7z_executable}" failonerror="true">
-                                    <arg
-                                        line="x ${project.remote-resource.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg -o${project.build.directory}/osx -aoa *"></arg>
+                                <exec executable="tar" dir="${extract.dir}" failonerror="true">
+                                    <arg value="-xzf"/>
+                                    <arg value="${project.remote-resource.directory}/${bundle.name}"/>
                                 </exec>
 
-                                <!-- tor 8 changed the directory structure of its osx binaries... -->
-                                <property name="path" value="${project.build.directory}/osx/Tor Browser.app/Contents/MacOS/Tor/"/>
-                                <!-- in case we want tor pre version 8, check for directory structure and set appropriate path -->
-                                <available file="${project.build.directory}/osx/TorBrowser.app" type="dir" property="path" value="${project.build.directory}/osx/TorBrowser.app/Contents/MacOS/Tor/"/>
+                                <fail message="Expected ${extract.dir}/tor in ${bundle.name}">
+                                    <condition>
+                                        <not>
+                                            <available file="${extract.dir}/tor" type="dir"/>
+                                        </not>
+                                    </condition>
+                                </fail>
 
                                 <delete dir="${project.basedir}/src/" failonerror="false" />
-                                <delete dir="${project.remote-resource.directory}" />
                                 <mkdir dir="${project.basedir}/src/main/resources/native/osx/x64/"/>
-                                <exec executable="tar" dir="${path}" failonerror="true">
+
+                                <exec executable="tar" dir="${extract.dir}/tor" failonerror="true">
                                     <arg line="-cJvf ${project.basedir}/src/main/resources/native/osx/x64/tor.tar.xz ."/>
                                 </exec>
+
+                                <delete dir="${project.remote-resource.directory}" />
                             </target>
                         </configuration>
                         <goals>
