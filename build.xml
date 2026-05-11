@@ -2,60 +2,86 @@
 <project name="tor-binaries" default="checkSignatures">
 
     <property name="project.source.directory" value="tmp"/>
-    <property name="torbrowser.version" value="11.5.2"/>
+    <property name="torbrowser.version" value="15.0.13"/>
+    <property name="torbrowser.download.base.url" value="https://archive.torproject.org/tor-package-archive/torbrowser/${torbrowser.version}"/>
     <target name="checkSignatures">
 
+        <delete dir="${project.source.directory}" failonerror="false"/>
         <mkdir dir="${project.source.directory}"/>
         <parallel>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/torbrowser-install-${torbrowser.version}_en-US.exe"
-                dest="${project.source.directory}/torbrowser-install-${torbrowser.version}_en-US.exe"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/torbrowser-install-${torbrowser.version}_en-US.exe.asc"
-                dest="${project.source.directory}/torbrowser-install-${torbrowser.version}_en-US.exe.asc"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz.asc"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg"
-                dest="${project.source.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg.asc"
-                dest="${project.source.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg.asc"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz.asc"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz"
-                dest="${project.source.directory}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz.asc"
-                dest="${project.source.directory}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz.asc"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz.asc"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"
-                dest="${project.source.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
                 skipexisting="true"/>
             <get
-                src="https://dist.torproject.org/torbrowser/${torbrowser.version}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz.asc"
-                dest="${project.source.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz.asc"
+                src="${torbrowser.download.base.url}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz.asc"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz.asc"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"
+                dest="${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"
+                skipexisting="true"/>
+            <get
+                src="${torbrowser.download.base.url}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz.asc"
+                dest="${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz.asc"
                 skipexisting="true"/>
         </parallel>
         <parallel>
             <exec executable="gpg" failonerror="true">
                 <arg
-                    line="--auto-key-locate keyserver --keyserver pool.sks-keyservers.net --keyserver-options auto-key-retrieve --verify ${project.source.directory}/torbrowser-install-${torbrowser.version}_en-US.exe.asc ${project.source.directory}/torbrowser-install-${torbrowser.version}_en-US.exe"></arg>
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"></arg>
             </exec>
             <exec executable="gpg" failonerror="true">
                 <arg
-                    line="--auto-key-locate keyserver --keyserver pool.sks-keyservers.net --keyserver-options auto-key-retrieve --verify ${project.source.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg.asc ${project.source.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg"></arg>
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"></arg>
             </exec>
             <exec executable="gpg" failonerror="true">
                 <arg
-                    line="--auto-key-locate keyserver --keyserver pool.sks-keyservers.net --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz.asc ${project.source.directory}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz"></arg>
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"></arg>
             </exec>
             <exec executable="gpg" failonerror="true">
                 <arg
-                    line="--auto-key-locate keyserver --keyserver pool.sks-keyservers.net --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz.asc ${project.source.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"></arg>
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"></arg>
+            </exec>
+            <exec executable="gpg" failonerror="true">
+                <arg
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"></arg>
+            </exec>
+            <exec executable="gpg" failonerror="true">
+                <arg
+                    line="--auto-key-locate keyserver --keyserver keys.openpgp.org --keyserver-options auto-key-retrieve --verify ${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz.asc ${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"></arg>
             </exec>
         </parallel>
 

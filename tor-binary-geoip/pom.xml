@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.bisq-network.tor-binary</groupId>
         <artifactId>tor-binary</artifactId>
-        <version>0.4.7.10</version>
+        <version>0.4.9.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -35,38 +35,40 @@
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.ant</groupId>
-                        <artifactId>ant-compress</artifactId>
-                        <version>1.4</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>unpack-geoip</id>
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <taskdef resource="org/apache/ant/compress/antlib.xml"
-                                         classpathref="maven.plugin.classpath"/>
+                                <property name="bundle.name" value="tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"/>
+                                <property name="extract.dir" value="${project.build.directory}/tor-expert-bundle-linux-x86_64"/>
 
-                                <unxz
-                                    src="${project.remote-resource.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"
-                                    dest="${project.build.directory}/linuxx64.tar"
+                                <delete dir="${extract.dir}" failonerror="false" />
+                                <mkdir dir="${extract.dir}"/>
 
-                                />
-                                <untar src="${project.build.directory}/linuxx64.tar"
-                                       dest="${project.basedir}/src/main/resources">
-                                    <patternset>
-                                        <include name="tor-browser_en-US/Browser/TorBrowser/Data/Tor/geoip"/>
-                                        <include name="tor-browser_en-US/Browser/TorBrowser/Data/Tor/geoip6"/>
-                                    </patternset>
-                                    <mapper type="flatten"/>
-                                </untar>
+                                <exec executable="tar" dir="${extract.dir}" failonerror="true">
+                                    <arg value="-xzf"/>
+                                    <arg value="${project.remote-resource.directory}/${bundle.name}"/>
+                                </exec>
+
+                                <fail message="Expected data/geoip and data/geoip6 in ${bundle.name}">
+                                    <condition>
+                                        <not>
+                                            <and>
+                                                <available file="${extract.dir}/data/geoip"/>
+                                                <available file="${extract.dir}/data/geoip6"/>
+                                            </and>
+                                        </not>
+                                    </condition>
+                                </fail>
+
+                                <delete dir="${project.basedir}/src/" failonerror="false" />
+                                <mkdir dir="${project.basedir}/src/main/resources"/>
+                                <copy file="${extract.dir}/data/geoip" todir="${project.basedir}/src/main/resources"/>
+                                <copy file="${extract.dir}/data/geoip6" todir="${project.basedir}/src/main/resources"/>
+
                                 <delete dir="${project.remote-resource.directory}" />
-
-                                <chmod dir="${project.basedir}/src/main/resources" perm="+x" includes="*"/>
                             </target>
                         </configuration>
                         <goals>

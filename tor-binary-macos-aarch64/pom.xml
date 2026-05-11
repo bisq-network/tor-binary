@@ -10,7 +10,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>tor-binary-linux32</artifactId>
+    <artifactId>tor-binary-macos-aarch64</artifactId>
     <packaging>jar</packaging>
 
     <build>
@@ -37,14 +37,14 @@
                 <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>download-and-verify</id>
+                        <id>unpack-macos-aarch64</id>
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <property name="bundle.name" value="tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"/>
-                                <property name="extract.dir" value="${project.build.directory}/tor-expert-bundle-linux-i686"/>
+                                <property name="bundle.name" value="tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"/>
+                                <property name="extract.dir" value="${project.build.directory}/tor-expert-bundle-macos-aarch64"/>
 
-                                <delete dir="${extract.dir}" failonerror="false"/>
+                                <delete dir="${extract.dir}" failonerror="false" />
                                 <mkdir dir="${extract.dir}"/>
 
                                 <exec executable="tar" dir="${extract.dir}" failonerror="true">
@@ -61,10 +61,10 @@
                                 </fail>
 
                                 <delete dir="${project.basedir}/src/" failonerror="false" />
-                                <mkdir dir="${project.basedir}/src/main/resources/native/linux/x86/"/>
+                                <mkdir dir="${project.basedir}/src/main/resources/native/osx/aarch64/"/>
 
                                 <exec executable="tar" dir="${extract.dir}/tor" failonerror="true">
-                                    <arg line="-cJvf ${project.basedir}/src/main/resources/native/linux/x86/tor.tar.xz ."/>
+                                    <arg line="-cJvf ${project.basedir}/src/main/resources/native/osx/aarch64/tor.tar.xz ."/>
                                 </exec>
 
                                 <delete dir="${project.remote-resource.directory}" />

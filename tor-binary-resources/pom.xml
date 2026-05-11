@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.bisq-network.tor-binary</groupId>
         <artifactId>tor-binary</artifactId>
-        <version>0.4.7.10</version>
+        <version>0.4.9.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -27,23 +27,32 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
+                                <delete dir="${project.source.directory}" failonerror="false"/>
                                 <mkdir dir="${project.source.directory}"/>
                                 <parallel>
                                     <get
-                                        src="https://dist.torproject.org/torbrowser/${torbrowser.version}/torbrowser-install-${torbrowser.version}_en-US.exe"
-                                        dest="${project.source.directory}/torbrowser-install-${torbrowser.version}_en-US.exe"
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"
                                         skipexisting="true"/>
                                     <get
-                                        src="https://dist.torproject.org/torbrowser/${torbrowser.version}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg"
-                                        dest="${project.source.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg"
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"
                                         skipexisting="true"/>
                                     <get
-                                        src="https://dist.torproject.org/torbrowser/${torbrowser.version}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz"
-                                        dest="${project.source.directory}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz"
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"
                                         skipexisting="true"/>
                                     <get
-                                        src="https://dist.torproject.org/torbrowser/${torbrowser.version}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"
-                                        dest="${project.source.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz"
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"
+                                        skipexisting="true"/>
+                                    <get
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"
+                                        skipexisting="true"/>
+                                    <get
+                                        src="${torbrowser.download.base.url}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"
+                                        dest="${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"
                                         skipexisting="true"/>
                                 </parallel>
 
@@ -53,25 +62,15 @@
 
                                 <condition property="checksumsMatch">
                                     <and>
-                                        <checksum algorithm="SHA-256" file="${project.source.directory}/torbrowser-install-${torbrowser.version}_en-US.exe" />
-                                        <checksum algorithm="SHA-256" file="${project.source.directory}/TorBrowser-${torbrowser.version}-osx64_en-US.dmg" />
-                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-browser-linux32-${torbrowser.version}_en-US.tar.xz" />
-                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-browser-linux64-${torbrowser.version}_en-US.tar.xz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz" />
+                                        <checksum algorithm="SHA-256" file="${project.source.directory}/tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz" />
                                     </and>
                                 </condition>
                                 <fail unless="checksumsMatch" />
-
-                                <get
-                                        src="https://sourceforge.net/projects/p7zip/files/p7zip/16.02/p7zip_16.02_x86_linux_bin.tar.bz2/download"
-                                        dest="${project.source.directory}/p7zip.tar.bz2"
-                                        skipexisting="true"/>
-                                <bunzip2 src="${project.source.directory}/p7zip.tar.bz2"
-                                    dest="${project.source.directory}/p7zip.tar" />
-                                <untar src="${project.source.directory}/p7zip.tar"
-                                       dest="${project.source.directory}/tmp/" />
-                                <move file="${project.source.directory}/tmp/p7zip_16.02/bin" tofile="${project.source.directory}/p7zip"/>
-                                <delete dir="${project.source.directory}/tmp"/>
-                                <delete file="${project.source.directory}/p7zip.tar"/>
                             </target>
                         </configuration>
                         <goals>
