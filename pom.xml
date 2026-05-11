@@ -14,11 +14,12 @@
         <!-- change here to get the desired version, verify signature, unpack and package tor binary
 
         requirements:
-        - gpg in path
+        - gpg in path for PGP signature verification
         - tar with gzip/xz support in path
         -->
         <torbrowser.version>15.0.13</torbrowser.version>
         <torbrowser.download.base.url>https://archive.torproject.org/tor-package-archive/torbrowser/${torbrowser.version}</torbrowser.download.base.url>
+        <pgp.signature.keyserver>keys.openpgp.org</pgp.signature.keyserver>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.remote-resource.directory>${project.build.directory}/maven-shared-archive-resources</project.remote-resource.directory>
@@ -69,4 +70,88 @@
         <module>tor-binary-windows64</module>
         <module>tor-binary-geoip</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>check-pgp-signatures</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>check-pgp-signatures</id>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <target>
+                                        <property name="pgp.signature.check.directory"
+                                                  value="${project.build.directory}/pgp-signature-check"/>
+
+                                        <macrodef name="fetch-tor-bundle">
+                                            <attribute name="bundle"/>
+                                            <sequential>
+                                                <get
+                                                    src="${torbrowser.download.base.url}/@{bundle}"
+                                                    dest="${pgp.signature.check.directory}/@{bundle}"
+                                                    skipexisting="true"/>
+                                                <get
+                                                    src="${torbrowser.download.base.url}/@{bundle}.asc"
+                                                    dest="${pgp.signature.check.directory}/@{bundle}.asc"
+                                                    skipexisting="true"/>
+                                            </sequential>
+                                        </macrodef>
+
+                                        <macrodef name="verify-tor-bundle">
+                                            <attribute name="bundle"/>
+                                            <sequential>
+                                                <exec executable="gpg" failonerror="true">
+                                                    <arg value="--batch"/>
+                                                    <arg value="--no-tty"/>
+                                                    <arg value="--auto-key-locate"/>
+                                                    <arg value="keyserver"/>
+                                                    <arg value="--keyserver"/>
+                                                    <arg value="${pgp.signature.keyserver}"/>
+                                                    <arg value="--keyserver-options"/>
+                                                    <arg value="auto-key-retrieve"/>
+                                                    <arg value="--verify"/>
+                                                    <arg value="${pgp.signature.check.directory}/@{bundle}.asc"/>
+                                                    <arg value="${pgp.signature.check.directory}/@{bundle}"/>
+                                                </exec>
+                                            </sequential>
+                                        </macrodef>
+
+                                        <delete dir="${pgp.signature.check.directory}" failonerror="false"/>
+                                        <mkdir dir="${pgp.signature.check.directory}"/>
+
+                                        <parallel>
+                                            <fetch-tor-bundle bundle="tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"/>
+                                            <fetch-tor-bundle bundle="tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"/>
+                                            <fetch-tor-bundle bundle="tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"/>
+                                            <fetch-tor-bundle bundle="tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"/>
+                                            <fetch-tor-bundle bundle="tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"/>
+                                            <fetch-tor-bundle bundle="tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"/>
+                                        </parallel>
+
+                                        <verify-tor-bundle bundle="tor-expert-bundle-windows-i686-${torbrowser.version}.tar.gz"/>
+                                        <verify-tor-bundle bundle="tor-expert-bundle-windows-x86_64-${torbrowser.version}.tar.gz"/>
+                                        <verify-tor-bundle bundle="tor-expert-bundle-macos-x86_64-${torbrowser.version}.tar.gz"/>
+                                        <verify-tor-bundle bundle="tor-expert-bundle-macos-aarch64-${torbrowser.version}.tar.gz"/>
+                                        <verify-tor-bundle bundle="tor-expert-bundle-linux-i686-${torbrowser.version}.tar.gz"/>
+                                        <verify-tor-bundle bundle="tor-expert-bundle-linux-x86_64-${torbrowser.version}.tar.gz"/>
+
+                                        <delete dir="${pgp.signature.check.directory}" failonerror="false"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
