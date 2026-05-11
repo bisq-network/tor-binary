@@ -19,16 +19,23 @@ Package native Tor files from [Tor Browser project](https://www.torproject.org/)
    - [tor-binary-linux32/pom.xml](tor-binary-linux32/pom.xml)
    - [tor-binary-linux64/pom.xml](tor-binary-linux64/pom.xml)
    - [tor-binary-macos/pom.xml](tor-binary-macos/pom.xml)
+   - [tor-binary-macos-aarch64/pom.xml](tor-binary-macos-aarch64/pom.xml)
    - [tor-binary-resources/pom.xml](tor-binary-resources/pom.xml)
    - [tor-binary-windows/pom.xml](tor-binary-windows/pom.xml)
+   - [tor-binary-windows64/pom.xml](tor-binary-windows64/pom.xml)
 4. Get the hash values of the new version from https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]/sha256sums-signed-build.txt and update the files inside [tor-binary-resources/checksums](tor-binary-resources/checksums). Alternatively, run `ant -f build.xml` to verify signatures and regenerate the checksum files.
+5. Verify the Tor expert bundle PGP signatures with Maven:
+   ```
+   mvn -N -Pcheck-pgp-signatures verify
+   ```
 
 Tor Browser versions can be found here: https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]
 
 # Pre-requisites
 
-- GPG, only when refreshing checksums with `build.xml`
+- GPG, when checking PGP signatures with Maven or refreshing checksums with `build.xml`
 - tar with gzip/xz support
+- network access to `archive.torproject.org` and `keys.openpgp.org` for PGP signature checks
 
 
 # Install
@@ -88,7 +95,21 @@ Each platform artifact is a JAR containing `native/.../tor.tar.xz`:
 ```
 <dependency>
     <groupId>com.github.bisq-network.tor-binary</groupId>
+    <artifactId>tor-binary-macos-aarch64</artifactId>
+    <version>${tor.version}</version>
+</dependency>
+```
+```
+<dependency>
+    <groupId>com.github.bisq-network.tor-binary</groupId>
     <artifactId>tor-binary-windows</artifactId>
+    <version>${tor.version}</version>
+</dependency>
+```
+```
+<dependency>
+    <groupId>com.github.bisq-network.tor-binary</groupId>
+    <artifactId>tor-binary-windows64</artifactId>
     <version>${tor.version}</version>
 </dependency>
 ```
