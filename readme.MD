@@ -72,6 +72,19 @@ access and never touches your own GPG keyring.
 
 Tor Browser versions can be found here: https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]
 
+# Continuous integration
+
+[.github/workflows/build.yml](.github/workflows/build.yml) runs three jobs on GitHub Actions for every push and
+pull request:
+
+- `Build`: `mvn clean install`, including the digest and tor version checks
+- `Verify signatures`: `mvn -N -Pcheck-pgp-signatures verify`, which needs the keyserver
+- `Verification self-test`: `tools/verification-selftest.sh`
+
+A pull request is checked with the workflow and the verification rules from its own branch. A passing run
+therefore does not show that changes to `verification.xml`, `build.xml`, the POM files or the workflow are
+correct. Review such changes separately.
+
 # Pre-requisites
 
 - GPG, when checking signatures with `mvn -Pcheck-pgp-signatures` or `build.xml`, and for the self-test

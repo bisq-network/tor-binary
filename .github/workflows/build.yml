@@ -1,0 +1,76 @@
+name: Build tor-binary
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          java-version: '21.0.11'
+          distribution: 'zulu'
+          check-latest: false
+
+      # Also verifies every expert bundle against the tracked manifest and the tor version of
+      # every bundled executable against the Maven project version.
+      - name: Build with Maven
+        run: mvn --batch-mode --no-transfer-progress clean install
+
+  verify-signatures:
+    name: Verify signatures
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          java-version: '21.0.11'
+          distribution: 'zulu'
+          check-latest: false
+
+      # Fetches the pinned Tor Browser signing key from the configured keyserver, so this job
+      # also fails when the keyserver cannot be reached.
+      - name: Verify manifest and bundle signatures
+        run: mvn --batch-mode --no-transfer-progress --non-recursive -Pcheck-pgp-signatures verify
+
+  verification-selftest:
+    name: Verification self-test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          java-version: '21.0.11'
+          distribution: 'zulu'
+          check-latest: false
+
+      - name: Run verification self-test
+        run: tools/verification-selftest.sh
