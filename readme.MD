@@ -38,10 +38,25 @@ Package native Tor files from [Tor Browser project](https://www.torproject.org/)
    ```
    mvn -N -Pcheck-pgp-signatures verify
    ```
+   This checks the manifest and bundle signatures. It does not check which Tor version the
+   executables contain.
 6. Build all artifacts:
    ```
    mvn clean install
    ```
+
+To check just the downloaded bundles' checksums and Tor executable versions during development,
+run the `tor-binary-resources` module's `generate-sources` phase from the repository root:
+
+```
+mvn -pl tor-binary-resources clean generate-sources
+```
+
+This phase downloads the configured Tor Browser bundles, verifies each checksum against the
+tracked manifest, and fails if any embedded Tor executable reports a version different from the
+Maven project version. A normal recursive `mvn clean install` from the repository root runs this
+same check as part of the module build. A non-recursive Maven command (`-N`) skips the module and
+therefore cannot detect an executable version mismatch.
 
 `mvn -N -Pcheck-pgp-signatures verify` performs the checks that need network access and GPG:
 
@@ -56,13 +71,12 @@ needs the keyserver to be reachable. Fetching every run is also what makes a rev
 is already present is never refreshed on its own. A keyserver that serves a certificate with the revocation
 removed still hides it, which no verifier can detect.
 
-`ant -f build.xml` runs the same checks, plus the digest and tor version checks below, and builds no artifact.
+`ant -f build.xml` runs the signature, digest, and Tor version checks together, and builds no artifact.
 
 `mvn clean install` needs neither GPG nor the keyserver. It verifies every downloaded expert bundle against
-the digest pinned in the tracked manifest and fails when an entry is missing or a digest differs, so no
-unverified bundle is ever packaged. It then reads the version that tor compiles into the tor executable of
-every bundle and fails when it differs from the Maven project version. An artifact therefore cannot be
-published under a tor version that it does not contain.
+the digest pinned in the tracked manifest and reads the version compiled into the tor executable of every
+bundle. It fails when a checksum entry is missing, a digest differs, or an executable's version differs
+from the Maven project version. This check runs in `tor-binary-resources` during `generate-sources`.
 
 [tools/verification-selftest.sh](tools/verification-selftest.sh) checks the rules themselves against local
 fixtures and its own throwaway test keys. It covers the digest rules, the tor version rules, the signature
