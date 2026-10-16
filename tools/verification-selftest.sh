@@ -14,7 +14,13 @@ set -o nounset
 
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 ant_command="${ANT:-ant}"
-torbrowser_version="15.0.24"
+# The fixtures use the bundle names of the configured release, so they follow pom.xml.
+torbrowser_version="$(sed -n 's|.*<torbrowser.version>\(.*\)</torbrowser.version>.*|\1|p' "$project_root/pom.xml")"
+version_pattern='^[0-9]+(\.[0-9]+)+[a-z0-9]*$'
+if ! [[ "$torbrowser_version" =~ $version_pattern ]]; then
+    echo "FAIL  cannot read a single torbrowser.version from $project_root/pom.xml: '$torbrowser_version'"
+    exit 1
+fi
 tor_fingerprint="EF6E286DDA85EA2A4BA7DE684E2C6E8793298290"
 platforms=(windows-i686 windows-x86_64 macos-x86_64 macos-aarch64 linux-i686 linux-x86_64)
 
@@ -269,7 +275,8 @@ create_key() {
     local user_id="$1" expiry="${2:-never}" faked_time="${3:-}"
     local time_option=()
     [ -n "$faked_time" ] && time_option=(--faked-system-time "$faked_time")
-    signer_gpg "${time_option[@]}" --passphrase '' --quick-generate-key \
+    # The guarded expansion keeps an empty array working under nounset in bash before 4.4 (macOS).
+    signer_gpg ${time_option[@]+"${time_option[@]}"} --passphrase '' --quick-generate-key \
         "$user_id" default default "$expiry" >/dev/null 2>&1
     signer_gpg --list-keys --with-colons "$user_id" 2>/dev/null | awk -F: '$1=="fpr"{print $10; exit}'
 }
@@ -279,7 +286,7 @@ sign_as() {
     local fingerprint="$1" file="$2" faked_time="${3:-}"
     local time_option=()
     [ -n "$faked_time" ] && time_option=(--faked-system-time "$faked_time")
-    signer_gpg "${time_option[@]}" --detach-sign --armor --local-user "$fingerprint" \
+    signer_gpg ${time_option[@]+"${time_option[@]}"} --detach-sign --armor --local-user "$fingerprint" \
         --output "$file.asc" "$file" >/dev/null 2>&1
 }
 

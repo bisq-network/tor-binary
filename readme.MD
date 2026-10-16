@@ -14,7 +14,7 @@ Package native Tor files from [Tor Browser project](https://www.torproject.org/)
 1. Replace `torbrowser.version` with the target Tor Browser bundle version in the root [Maven file](pom.xml)
 2. Find out which `tor binary version` is used in that Tor Browser release. Use that as the Maven project version.
    The [download page](https://www.torproject.org/download/tor/) lists it next to each release, for example
-   `15.0.23 (tor 0.4.9.13)`. The build fails when the tor executable in any bundle reports another version.
+   `15.0.25 (tor 0.4.9.14)`. The build fails when the tor executable in any bundle reports another version.
 3. Set the `tor-binary version` in the following Maven files:
    - [pom.xml](pom.xml)
    - [tor-binary-geoip/pom.xml](tor-binary-geoip/pom.xml)
@@ -29,7 +29,7 @@ Package native Tor files from [Tor Browser project](https://www.torproject.org/)
    version under `torbrowser.checksum.source.url`:
    ```
    curl --fail --remote-name-all \
-       https://archive.torproject.org/tor-package-archive/torbrowser/15.0.24/{sha256sums-signed-build.txt,sha256sums-signed-build.txt.asc}
+       https://archive.torproject.org/tor-package-archive/torbrowser/15.0.25/{sha256sums-signed-build.txt,sha256sums-signed-build.txt.asc}
    mv sha256sums-signed-build.txt sha256sums-signed-build.txt.asc tor-binary-resources/checksums/
    ```
    Store the manifest exactly as published, with all its entries and without adding anything. It has to stay
@@ -82,7 +82,8 @@ from the Maven project version. This check runs in `tor-binary-resources` during
 fixtures and its own throwaway test keys. It covers the digest rules, the tor version rules, the signature
 rules, including a signature made with an unrelated key, a revoked key, an expired key and content changed
 after signing, and the key fetch against a stub keyserver on the loopback interface. It needs no network
-access and never touches your own GPG keyring.
+access and never touches your own GPG keyring. It reads `torbrowser.version` from the root [pom.xml](pom.xml),
+so it needs no change for a version update.
 
 Tor Browser versions can be found here: https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]
 
@@ -103,7 +104,8 @@ correct. Review such changes separately.
 
 - Apache Ant on `PATH` to run `tools/verification-selftest.sh` or `ant -f build.xml`. The Maven builds
   use Maven's Ant plugin and do not need the standalone `ant` command.
-- GPG, when checking signatures with `mvn -Pcheck-pgp-signatures` or `build.xml`, and for the self-test
+- GPG, when checking signatures with `mvn -N -Pcheck-pgp-signatures verify` or `ant -f build.xml`, and for
+  the self-test
 - tar with gzip/xz support
 - network access to `archive.torproject.org` for the bundles, and to the configured keyserver
   (`hkps://keys.openpgp.org`) for the Tor signing key

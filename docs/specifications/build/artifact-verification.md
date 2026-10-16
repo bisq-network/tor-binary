@@ -172,7 +172,7 @@ the version scheme. This rule does not make that decision.
 The manifest is checked before the bundles are downloaded, so that an unauthenticated or outdated manifest
 stops the run immediately.
 
-| Verification point | `ant -f build.xml` | `mvn -Pcheck-pgp-signatures verify` | `mvn clean install` |
+| Verification point | `ant -f build.xml` | `mvn -N -Pcheck-pgp-signatures verify` | `mvn clean install` |
 | --- | --- | --- | --- |
 | Manifest signature | yes | yes | no |
 | Manifest against its published source | yes | yes | no |
