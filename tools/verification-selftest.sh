@@ -269,7 +269,8 @@ create_key() {
     local user_id="$1" expiry="${2:-never}" faked_time="${3:-}"
     local time_option=()
     [ -n "$faked_time" ] && time_option=(--faked-system-time "$faked_time")
-    signer_gpg "${time_option[@]}" --passphrase '' --quick-generate-key \
+    # The guarded expansion keeps an empty array working under nounset in bash before 4.4 (macOS).
+    signer_gpg ${time_option[@]+"${time_option[@]}"} --passphrase '' --quick-generate-key \
         "$user_id" default default "$expiry" >/dev/null 2>&1
     signer_gpg --list-keys --with-colons "$user_id" 2>/dev/null | awk -F: '$1=="fpr"{print $10; exit}'
 }
@@ -279,7 +280,7 @@ sign_as() {
     local fingerprint="$1" file="$2" faked_time="${3:-}"
     local time_option=()
     [ -n "$faked_time" ] && time_option=(--faked-system-time "$faked_time")
-    signer_gpg "${time_option[@]}" --detach-sign --armor --local-user "$fingerprint" \
+    signer_gpg ${time_option[@]+"${time_option[@]}"} --detach-sign --armor --local-user "$fingerprint" \
         --output "$file.asc" "$file" >/dev/null 2>&1
 }
 
