@@ -14,7 +14,13 @@ set -o nounset
 
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 ant_command="${ANT:-ant}"
-torbrowser_version="15.0.25"
+# The fixtures use the bundle names of the configured release, so they follow pom.xml.
+torbrowser_version="$(sed -n 's|.*<torbrowser.version>\(.*\)</torbrowser.version>.*|\1|p' "$project_root/pom.xml")"
+version_pattern='^[0-9]+(\.[0-9]+)+[a-z0-9]*$'
+if ! [[ "$torbrowser_version" =~ $version_pattern ]]; then
+    echo "FAIL  cannot read a single torbrowser.version from $project_root/pom.xml: '$torbrowser_version'"
+    exit 1
+fi
 tor_fingerprint="EF6E286DDA85EA2A4BA7DE684E2C6E8793298290"
 platforms=(windows-i686 windows-x86_64 macos-x86_64 macos-aarch64 linux-i686 linux-x86_64)
 

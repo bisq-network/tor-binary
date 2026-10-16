@@ -82,7 +82,8 @@ from the Maven project version. This check runs in `tor-binary-resources` during
 fixtures and its own throwaway test keys. It covers the digest rules, the tor version rules, the signature
 rules, including a signature made with an unrelated key, a revoked key, an expired key and content changed
 after signing, and the key fetch against a stub keyserver on the loopback interface. It needs no network
-access and never touches your own GPG keyring.
+access and never touches your own GPG keyring. It reads `torbrowser.version` from the root [pom.xml](pom.xml),
+so it needs no change for a version update.
 
 Tor Browser versions can be found here: https://archive.torproject.org/tor-package-archive/torbrowser/[torbrowser.version]
 
