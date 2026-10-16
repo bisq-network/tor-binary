@@ -14,7 +14,7 @@ set -o nounset
 
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 ant_command="${ANT:-ant}"
-torbrowser_version="15.0.24"
+torbrowser_version="15.0.25"
 tor_fingerprint="EF6E286DDA85EA2A4BA7DE684E2C6E8793298290"
 platforms=(windows-i686 windows-x86_64 macos-x86_64 macos-aarch64 linux-i686 linux-x86_64)
 
