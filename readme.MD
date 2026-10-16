@@ -103,7 +103,8 @@ correct. Review such changes separately.
 
 - Apache Ant on `PATH` to run `tools/verification-selftest.sh` or `ant -f build.xml`. The Maven builds
   use Maven's Ant plugin and do not need the standalone `ant` command.
-- GPG, when checking signatures with `mvn -Pcheck-pgp-signatures` or `build.xml`, and for the self-test
+- GPG, when checking signatures with `mvn -N -Pcheck-pgp-signatures verify` or `ant -f build.xml`, and for
+  the self-test
 - tar with gzip/xz support
 - network access to `archive.torproject.org` for the bundles, and to the configured keyserver
   (`hkps://keys.openpgp.org`) for the Tor signing key
